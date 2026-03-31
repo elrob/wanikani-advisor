@@ -1,0 +1,31 @@
+{
+  "name": "wanikani-advisor",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "wanikani-advisor": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "wanikani",
+    "kanji",
+    "japanese",
+    "study"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "AI-powered study advisor for WaniKani - analyzes your mistakes and provides personalized kanji/vocabulary advice",
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@anthropic-ai/bedrock-sdk": "^0.26.4"
+  }
+}
