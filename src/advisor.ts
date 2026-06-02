@@ -66,7 +66,7 @@ export async function getAdvice(
   console.error("Asking Claude for personalized advice...");
 
   const response = await client.messages.create({
-    model: "us.anthropic.claude-opus-4-6-v1:0",
+    model: "us.anthropic.claude-opus-4-6-v1",
     max_tokens: 4096,
     messages: [{ role: "user", content: prompt }],
   });
