@@ -22,11 +22,11 @@
   "license": "ISC",
   "description": "AI-powered study advisor for WaniKani - analyzes your mistakes and provides personalized kanji/vocabulary advice",
   "devDependencies": {
-    "@types/node": "^25.5.0",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "@types/node": "^25.9.1",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@anthropic-ai/bedrock-sdk": "^0.26.4"
+    "@anthropic-ai/bedrock-sdk": "^0.29.2"
   }
 }
