@@ -16,11 +16,7 @@ Requires Node.js 24+ and pnpm.
 pnpm install
 ```
 
-Copy `.env.example` to `.env` and fill in your credentials:
-
-```sh
-cp .env.example .env
-```
+Set the following environment variables:
 
 | Variable | Description |
 |----------|-------------|
