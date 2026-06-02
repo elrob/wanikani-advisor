@@ -1,5 +1,5 @@
 import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
-import type { AnalysisResult, TroubleItem, SimilarGroup } from "./types.js";
+import type { AnalysisResult, SimilarGroup, TroubleItem } from "./types.js";
 
 function formatItemForPrompt(item: TroubleItem): string {
   const totalAttempts =
@@ -57,9 +57,7 @@ Please provide:
 Use Japanese characters where helpful. Be specific and practical — avoid generic study advice.`;
 }
 
-export async function getAdvice(
-  analysis: AnalysisResult
-): Promise<string> {
+export async function getAdvice(analysis: AnalysisResult): Promise<string> {
   const client = new AnthropicBedrock();
   const prompt = buildPrompt(analysis);
 

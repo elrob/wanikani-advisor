@@ -1,9 +1,4 @@
-import type {
-  WKCollection,
-  ReviewStatistic,
-  Subject,
-  Assignment,
-} from "./types.js";
+import type { Assignment, ReviewStatistic, Subject, WKCollection } from "./types.js";
 
 const BASE_URL = "https://api.wanikani.com/v2";
 const RATE_LIMIT_DELAY = 1100; // slightly over 1s to stay under 60/min
@@ -20,9 +15,7 @@ export class WaniKaniClient {
     const now = Date.now();
     const elapsed = now - this.lastRequestTime;
     if (elapsed < RATE_LIMIT_DELAY) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, RATE_LIMIT_DELAY - elapsed)
-      );
+      await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY - elapsed));
     }
     this.lastRequestTime = Date.now();
   }
@@ -38,15 +31,11 @@ export class WaniKaniClient {
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new Error(
-          "Invalid WaniKani API token. Check your WANIKANI_API_TOKEN."
-        );
+        throw new Error("Invalid WaniKani API token. Check your WANIKANI_API_TOKEN.");
       }
       if (response.status === 429) {
         const resetTime = response.headers.get("RateLimit-Reset");
-        const waitMs = resetTime
-          ? Number(resetTime) * 1000 - Date.now() + 500
-          : 5000;
+        const waitMs = resetTime ? Number(resetTime) * 1000 - Date.now() + 500 : 5000;
         await new Promise((resolve) => setTimeout(resolve, waitMs));
         return this.fetch<T>(url);
       }
@@ -82,9 +71,7 @@ export class WaniKaniClient {
     return this.fetchAllPages<ReviewStatistic>(url);
   }
 
-  async getSubjects(
-    ids: number[]
-  ): Promise<WKCollection<Subject>["data"]> {
+  async getSubjects(ids: number[]): Promise<WKCollection<Subject>["data"]> {
     // API allows filtering by ids, but URL length is limited.
     // Batch into chunks of 100.
     const allItems: WKCollection<Subject>["data"] = [];
@@ -97,9 +84,7 @@ export class WaniKaniClient {
     return allItems;
   }
 
-  async getAssignments(
-    subjectIds: number[]
-  ): Promise<WKCollection<Assignment>["data"]> {
+  async getAssignments(subjectIds: number[]): Promise<WKCollection<Assignment>["data"]> {
     const allItems: WKCollection<Assignment>["data"] = [];
     for (let i = 0; i < subjectIds.length; i += 100) {
       const chunk = subjectIds.slice(i, i + 100);

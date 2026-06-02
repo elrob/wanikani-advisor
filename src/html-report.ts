@@ -1,8 +1,8 @@
+import { execSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { execSync } from "node:child_process";
-import type { AnalysisResult, TroubleItem, SimilarGroup } from "./types.js";
+import type { AnalysisResult, SimilarGroup, TroubleItem } from "./types.js";
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -10,8 +10,7 @@ function escapeHtml(s: string): string {
 
 function errorBar(rate: number): string {
   const pct = Math.round(rate * 100);
-  const color =
-    pct >= 40 ? "#e74c3c" : pct >= 20 ? "#f39c12" : "#2ecc71";
+  const color = pct >= 40 ? "#e74c3c" : pct >= 20 ? "#f39c12" : "#2ecc71";
   return `<div class="error-bar"><div class="error-fill" style="width:${pct}%;background:${color}"></div><span>${pct}%</span></div>`;
 }
 
@@ -31,11 +30,15 @@ function renderItem(item: TroubleItem): string {
           <span class="label">Meanings</span>
           <span class="value">${escapeHtml(item.meanings.join(", "))}</span>
         </div>
-        ${item.readings.length > 0 ? `
+        ${
+          item.readings.length > 0
+            ? `
         <div class="detail-row">
           <span class="label">Readings</span>
           <span class="value reading">${escapeHtml(item.readings.join(", "))}</span>
-        </div>` : ""}
+        </div>`
+            : ""
+        }
         <div class="detail-row">
           <span class="label">Meaning errors</span>
           <div class="value">${errorBar(item.meaningErrorRate)} <small>${item.meaningIncorrect} wrong of ${item.meaningCorrect + item.meaningIncorrect}</small></div>
@@ -80,9 +83,7 @@ function renderAdvice(advice: string): string {
     .replace(/`(.+?)`/g, "<code>$1</code>")
     .replace(/^- (.+)$/gm, "<li>$1</li>")
     .replace(/^(\d+)\. (.+)$/gm, "<li>$2</li>")
-    .replace(/(<li>.*<\/li>\n?)+/g, (match) =>
-      `<ul>${match}</ul>`
-    )
+    .replace(/(<li>.*<\/li>\n?)+/g, (match) => `<ul>${match}</ul>`)
     .replace(/\n\n/g, "</p><p>")
     .replace(/^/, "<p>")
     .replace(/$/, "</p>")
@@ -90,10 +91,7 @@ function renderAdvice(advice: string): string {
     .replace(/<\/(h[1-5]|ul|li)><\/p>/g, "</$1>");
 }
 
-export function generateHtml(
-  analysis: AnalysisResult,
-  advice: string | null
-): string {
+export function generateHtml(analysis: AnalysisResult, advice: string | null): string {
   const { troubleItems, similarGroups, summary } = analysis;
 
   const itemsHtml = troubleItems.map(renderItem).join("\n");
@@ -342,17 +340,13 @@ export function generateHtml(
 </html>`;
 }
 
-export function openReport(
-  analysis: AnalysisResult,
-  advice: string | null
-): string {
+export function openReport(analysis: AnalysisResult, advice: string | null): string {
   const html = generateHtml(analysis, advice);
   const filePath = join(tmpdir(), `wanikani-report-${Date.now()}.html`);
   writeFileSync(filePath, html, "utf-8");
 
   const platform = process.platform;
-  const openCmd =
-    platform === "darwin" ? "open" : platform === "win32" ? "start" : "xdg-open";
+  const openCmd = platform === "darwin" ? "open" : platform === "win32" ? "start" : "xdg-open";
 
   try {
     execSync(`${openCmd} "${filePath}"`);

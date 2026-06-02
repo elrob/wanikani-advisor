@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import { parseArgs } from "node:util";
-import { WaniKaniClient } from "./wanikani-client.js";
-import { analyze } from "./analyzer.js";
 import { getAdvice } from "./advisor.js";
+import { analyze } from "./analyzer.js";
 import { openReport } from "./html-report.js";
+import { WaniKaniClient } from "./wanikani-client.js";
 
 function printUsage(): void {
   console.log(`
@@ -106,9 +106,9 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const limit = parseInt(values.limit!, 10);
-  const minErrors = parseInt(values["min-errors"]!, 10);
-  const subjectTypes = values.types!.split(",");
+  const limit = parseInt(values.limit as string, 10);
+  const minErrors = parseInt(values["min-errors"] as string, 10);
+  const subjectTypes = (values.types as string).split(",");
 
   const client = new WaniKaniClient(wanikaniToken);
 

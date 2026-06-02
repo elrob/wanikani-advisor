@@ -1,31 +1,24 @@
-import { WaniKaniClient } from "./wanikani-client.js";
 import type {
-  TroubleItem,
   AnalysisResult,
-  SimilarGroup,
   KanjiSubject,
-  VocabularySubject,
+  SimilarGroup,
   Subject,
-  ReviewStatistic,
-  Assignment,
-  WKResource,
+  TroubleItem,
+  VocabularySubject,
 } from "./types.js";
 import { SRS_STAGE_NAMES } from "./types.js";
+import type { WaniKaniClient } from "./wanikani-client.js";
 
 function errorRate(incorrect: number, correct: number): number {
   const total = incorrect + correct;
   return total === 0 ? 0 : incorrect / total;
 }
 
-function hasReadings(
-  subject: Subject
-): subject is KanjiSubject | VocabularySubject {
+function hasReadings(subject: Subject): subject is KanjiSubject | VocabularySubject {
   return "readings" in subject;
 }
 
-function hasVisuallySimilar(
-  subject: Subject
-): subject is KanjiSubject {
+function hasVisuallySimilar(subject: Subject): subject is KanjiSubject {
   return "visually_similar_subject_ids" in subject;
 }
 
@@ -75,9 +68,7 @@ export async function analyze(
   ]);
 
   const subjectMap = new Map(subjects.map((s) => [s.id, s]));
-  const assignmentMap = new Map(
-    assignments.map((a) => [a.data.subject_id, a])
-  );
+  const assignmentMap = new Map(assignments.map((a) => [a.data.subject_id, a]));
 
   // 4. Build enriched trouble items
   const troubleItems: TroubleItem[] = withErrors.map((stat) => {
@@ -85,23 +76,23 @@ export async function analyze(
     const assignment = assignmentMap.get(stat.data.subject_id);
     const subjectData = subject?.data;
 
-    const meanings = subjectData?.meanings
-      .filter((m) => m.accepted_answer)
-      .map((m) => m.meaning) ?? [];
+    const meanings =
+      subjectData?.meanings.filter((m) => m.accepted_answer).map((m) => m.meaning) ?? [];
 
-    const readings = subjectData && hasReadings(subjectData)
-      ? subjectData.readings
-          .filter((r) => r.accepted_answer)
-          .map((r) => r.reading)
-      : [];
+    const readings =
+      subjectData && hasReadings(subjectData)
+        ? subjectData.readings.filter((r) => r.accepted_answer).map((r) => r.reading)
+        : [];
 
-    const visuallySimilarIds = subjectData && hasVisuallySimilar(subjectData)
-      ? subjectData.visually_similar_subject_ids
-      : [];
+    const visuallySimilarIds =
+      subjectData && hasVisuallySimilar(subjectData)
+        ? subjectData.visually_similar_subject_ids
+        : [];
 
-    const componentIds = subjectData && "component_subject_ids" in subjectData
-      ? (subjectData as KanjiSubject | VocabularySubject).component_subject_ids
-      : [];
+    const componentIds =
+      subjectData && "component_subject_ids" in subjectData
+        ? (subjectData as KanjiSubject | VocabularySubject).component_subject_ids
+        : [];
 
     const srsStage = assignment?.data.srs_stage ?? -1;
 
@@ -160,11 +151,11 @@ function buildSimilarGroups(items: TroubleItem[]): SimilarGroup[] {
 
     const similarInTroubleList = item.visuallySimilarIds
       .filter((id) => itemMap.has(id))
-      .map((id) => itemMap.get(id)!);
+      .map((id) => itemMap.get(id) as TroubleItem);
 
     if (similarInTroubleList.length > 0) {
       const group = [item, ...similarInTroubleList];
-      group.forEach((g) => visited.add(g.subjectId));
+      for (const g of group) visited.add(g.subjectId);
       groups.push({
         label: group.map((g) => g.characters).join(" / "),
         items: group,
@@ -182,12 +173,12 @@ function buildSimilarGroups(items: TroubleItem[]): SimilarGroup[] {
     for (const meaning of item.meanings) {
       const key = meaning.toLowerCase();
       if (!meaningMap.has(key)) meaningMap.set(key, []);
-      meaningMap.get(key)!.push(item);
+      meaningMap.get(key)?.push(item);
     }
   }
   for (const [meaning, group] of meaningMap) {
     if (group.length >= 2) {
-      group.forEach((g) => visited.add(g.subjectId));
+      for (const g of group) visited.add(g.subjectId);
       groups.push({
         label: group.map((g) => g.characters).join(" / "),
         items: group,
