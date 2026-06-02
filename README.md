@@ -10,20 +10,37 @@ AI-powered study advisor for WaniKani. Analyzes your review mistakes and uses Cl
 
 ## Setup
 
-Requires Node.js 22+.
+Requires Node.js 24+ and pnpm.
 
 ```sh
-npm install
-npm run build
+pnpm install
+```
+
+Copy `.env.example` to `.env` and fill in your credentials:
+
+```sh
+cp .env.example .env
+```
+
+| Variable | Description |
+|----------|-------------|
+| `WANIKANI_API_TOKEN` | Your WaniKani API token — get one at https://www.wanikani.com/settings/personal_access_tokens |
+| `AWS_PROFILE` | AWS profile with Bedrock access (e.g. `sso`) |
+| `AWS_REGION` | AWS region for Bedrock (e.g. `us-east-1`) |
+
+If using AWS SSO, log in first:
+
+```sh
+aws sso login --profile sso
 ```
 
 ## Usage
 
 ```sh
-WANIKANI_API_TOKEN=<token> npm start
+pnpm dev
 ```
 
-Claude AI advice is provided via Amazon Bedrock. AWS credentials are auto-detected from your environment (profile, env vars, IAM role, etc.).
+Claude AI advice is provided via Amazon Bedrock using the `us.anthropic.claude-opus-4-6-v1` inference profile.
 
 ### Options
 
@@ -39,16 +56,11 @@ Claude AI advice is provided via Amazon Bedrock. AWS credentials are auto-detect
 
 ```sh
 # Top 10 worst kanji only
-WANIKANI_API_TOKEN=... npm start -- --limit 10 --types kanji
+pnpm dev -- --limit 10 --types kanji
 
 # Raw analysis without AI advice
-WANIKANI_API_TOKEN=... npm start -- --no-ai
+pnpm dev -- --no-ai --cli
 
-# Development mode (no build step)
-WANIKANI_API_TOKEN=... npm run dev
+# Terminal output instead of HTML report
+pnpm dev -- --cli
 ```
-
-## Tokens & credentials
-
-- **WaniKani**: https://www.wanikani.com/settings/personal_access_tokens
-- **AWS (Bedrock)**: Uses standard AWS credential chain (env vars, `~/.aws/credentials`, IAM role, etc.)
