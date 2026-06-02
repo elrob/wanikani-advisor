@@ -1,6 +1,7 @@
 {
   "name": "wanikani-advisor",
   "version": "1.0.0",
+  "packageManager": "pnpm@11.5.1",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
