@@ -48,6 +48,14 @@ Claude AI advice is provided via Amazon Bedrock using the `us.anthropic.claude-o
 | `--no-ai` | false | Skip Claude advice, show raw analysis only |
 | `--cli` | false | Output to terminal instead of HTML report |
 
+## Level progress chart
+
+`level-progress.mjs` is a standalone script that fetches your level progressions and opens an HTML chart showing days per level and cumulative progress over time. Only requires `WANIKANI_API_TOKEN`.
+
+```sh
+WANIKANI_API_TOKEN=<token> node level-progress.mjs
+```
+
 ### Examples
 
 ```sh
